@@ -1,7 +1,5 @@
 package day01
 
-import java.io.File
-
 fun part1() {
     val count = generateSequence(::readlnOrNull)
         .map { it.toInt() }
