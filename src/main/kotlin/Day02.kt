@@ -28,15 +28,15 @@ fun part1() {
 fun part2() {
     val position = generateSequence(::readlnOrNull)
         .map { Command.parse(it) }
-        .fold(Position()) { acc, pair ->
-            when (pair.direction) {
+        .fold(Position()) { acc, command ->
+            when (command.direction) {
                 Direction.FORWARD -> Position(
-                    acc.horizontal + pair.distance,
-                    acc.depth + (acc.aim * pair.distance),
+                    acc.horizontal + command.distance,
+                    acc.depth + (acc.aim * command.distance),
                     acc.aim
                 )
-                Direction.DOWN -> Position(acc.horizontal, acc.depth, acc.aim + pair.distance)
-                Direction.UP -> Position(acc.horizontal, acc.depth, acc.aim - pair.distance)
+                Direction.DOWN -> Position(acc.horizontal, acc.depth, acc.aim + command.distance)
+                Direction.UP -> Position(acc.horizontal, acc.depth, acc.aim - command.distance)
             }
         }
     println(position.horizontal * position.depth)
