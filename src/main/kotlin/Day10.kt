@@ -40,34 +40,25 @@ fun part1(input: List<String>) {
 fun part2(input: List<String>) {
     val matching = mapOf('[' to ']', '(' to ')', '{' to '}', '<' to '>')
 
-    val stacks = input.map { line ->
-        val stack = Stack<Char>()
-        var invalid = false
-        for (char in line.toList()) {
-            val success = when (char) {
-                in matching.keys -> {
-                    stack.push(char)
-                    true
+    val stacks = input
+        .map { line -> line.toList() }
+        .map { line ->
+            line
+                .fold(Stack<Char>()) { acc, el ->
+                    val success = when (el) {
+                        in matching.keys -> acc.push(el).let { true }
+                        in matching.values -> matching[acc.pop()] == el
+                        else -> true
+                    }
+                    if (success) acc else return@map Stack<Char>()
                 }
-                in matching.values -> {
-                    val last = stack.pop()
-                    matching[last] == char
-                }
-                else -> true
-            }
-            if (!success) {
-                invalid = true
-                break
-            }
-        }
-        if (invalid) Stack<Char>() else stack
-    }
+        }.filterNot { it.empty() }
 
     val allSums = stacks
-        .filter { it.isNotEmpty() }
+        .map { stack -> stack.reversed() }
+        .map { stack -> stack.map { matching[it] } }
         .map { stack ->
-            val closing = stack.reversed().map { matching[it] }
-            closing.fold(0L) { acc, char ->
+            stack.fold(0L) { acc, char ->
                 acc * 5 + when (char) {
                     ')' -> 1
                     ']' -> 2
