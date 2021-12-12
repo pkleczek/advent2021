@@ -44,15 +44,17 @@ fun part2(input: List<String>) {
         .map { line -> line.toList() }
         .map { line ->
             line
-                .fold(Stack<Char>()) { acc, el ->
-                    val success = when (el) {
-                        in matching.keys -> acc.push(el).let { true }
-                        in matching.values -> matching[acc.pop()] == el
-                        else -> true
+                .fold(listOf<Char>()) { acc, el ->
+                    when (el) {
+                        in matching.keys -> acc + el
+                        in matching.values -> if (matching[acc.last()] == el)
+                            acc.dropLast(1)
+                        else
+                            return@map listOf()
+                        else -> acc
                     }
-                    if (success) acc else return@map Stack<Char>()
                 }
-        }.filterNot { it.empty() }
+        }.filterNot { it.isEmpty() }
 
     val allSums = stacks
         .map { stack -> stack.reversed() }
