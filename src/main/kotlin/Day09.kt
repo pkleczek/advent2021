@@ -32,19 +32,13 @@ fun part2(input: List<String>) {
         line.toList().map { c -> c.digitToInt() }
     }
 
-    val lower = mutableListOf<Pair<Int, Int>>()
-
-    numbers.forEachIndexed { i, _ ->
-        numbers[i].forEachIndexed { j, value ->
-            val valid = listOf(i to j + 1, i to j - 1, i + 1 to j, i - 1 to j)
-                .mapNotNull { (i, j) -> numbers.value(i, j) }
-                .all { value < it }
-
-            if (valid)
-                lower.add(i to j)
-
-        }
-    }
+    val lower = points(numbers).map { (i, j) ->
+        val value = numbers[i][j]
+        val valid = listOf(i to j + 1, i to j - 1, i + 1 to j, i - 1 to j)
+            .mapNotNull { (i, j) -> numbers.value(i, j) }
+            .all { value < it }
+        if (valid) i to j else null
+    }.filterNotNull()
 
     val sizes = lower.map { point ->
         val toVisit = mutableListOf(point)
@@ -73,10 +67,20 @@ fun part2(input: List<String>) {
     val largest = sizes
         .sortedDescending()
         .take(3)
-        .also { println(it) }
+        .also { println(it.toList()) }
         .reduce { i, j -> i * j }
 
     println(largest)
+}
+
+private fun points(numbers: List<List<Int>>): Sequence<Pair<Int, Int>> {
+    return sequence {
+        repeat(numbers.size) { i ->
+            repeat(numbers[0].size) { j ->
+                yield(i to j)
+            }
+        }
+    }
 }
 
 fun List<List<Int>>.value(i: Int, j: Int): Int? = this.getOrNull(i)?.getOrNull(j)
