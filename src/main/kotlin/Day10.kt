@@ -43,17 +43,16 @@ fun part2(input: List<String>) {
     val stacks = input
         .map { line -> line.toList() }
         .map { line ->
-            line
-                .fold(listOf<Char>()) { acc, el ->
-                    when (el) {
-                        in matching.keys -> acc + el
-                        in matching.values -> if (matching[acc.last()] == el)
-                            acc.dropLast(1)
-                        else
-                            return@map listOf()
-                        else -> acc
-                    }
+            line.fold(listOf<Char>()) { acc, el ->
+                when (el) {
+                    in matching.keys -> acc + el
+                    in matching.values -> if (matching[acc.last()] == el)
+                        acc.dropLast(1)
+                    else
+                        return@map listOf()
+                    else -> acc
                 }
+            }
         }.filterNot { it.isEmpty() }
 
     val allSums = stacks
